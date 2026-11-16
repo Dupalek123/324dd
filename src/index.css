@@ -73,3 +73,8 @@ input, select, textarea { font-size: 16px; } /* iOS nie powiększa widoku przy f
 .przewijanie-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 @media print { .bez-druku { display: none !important; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Wąskie ekrany i powiększona czcionka: nic nie może rozepchnąć strony w poziomie. */
+html, body { overflow-x: clip; }
+.truncate { min-width: 0; }
+main .grid > *, main .flex > * { min-width: 0; }
