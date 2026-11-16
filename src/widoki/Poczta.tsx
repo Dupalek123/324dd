@@ -20,19 +20,26 @@ export default function Poczta() {
   const [nowe, setNowe] = useState<{ od: string; temat: string; tresc: string; zrodlo: Zapytanie['zrodlo'] } | null>(null);
   const [zGmaila, setZGmaila] = useState<Wiadomosc[] | null>(null);
   const [czeka, setCzeka] = useState(false);
+  const [wynik, setWynik] = useState<{ ok: boolean; pusto: boolean; zapytanie: string; tekst: string } | null>(null);
   const [otwarte, setOtwarte] = useState<string | null>(null);
   const [klient, setKlient] = useState<{ dane: Partial<Klient>; zapytanieId: string } | null>(null);
 
   const lista = zapytania.filter((z) => stan.filtr === 'wszystkie' || z.status === stan.filtr).filter((z) => pasuje(stan.szukaj, z.od, z.temat, z.tresc))
     .sort((a, b) => (stan.sort === 'nadawca' ? a.od.localeCompare(b.od, 'pl') : b.data.localeCompare(a.data) || b.utworzono - a.utworzono));
-  const pobierz = async () => {
+  const CALA_SKRZYNKA = 'in:inbox newer_than:14d';
+  const pobierz = async (zapytanie: string = ust.google.zapytanie) => {
     setCzeka(true);
+    setWynik(null);
     try {
       const znane = new Set(zapytania.map((z) => z.gmailId).filter(Boolean));
-      const w = (await pobierzWiadomosci(ust.google.zapytanie)).filter((m) => !znane.has(m.id));
+      const wszystkie = await pobierzWiadomosci(zapytanie);
+      const w = wszystkie.filter((m) => !znane.has(m.id));
       setZGmaila(w);
-      if (!w.length) komunikat('Brak nowych wiadomości pasujących do filtra.', 'info');
-    } catch (e) { komunikat((e as Error).message, 'blad'); } finally { setCzeka(false); }
+      setWynik({ ok: true, pusto: w.length === 0, zapytanie,
+        tekst: w.length ? `Znaleziono ${w.length} nowych wiadomości (filtr: ${zapytanie}).`
+          : wszystkie.length ? `Wszystkie ${wszystkie.length} wiadomości z tego filtra są już dodane jako zapytania.`
+          : `Połączenie z Gmailem działa, ale filtr „${zapytanie}” nie pasuje do żadnej wiadomości.` });
+    } catch (e) { setWynik({ ok: false, pusto: false, zapytanie, tekst: (e as Error).message }); } finally { setCzeka(false); }
   };
   const importuj = async (wiadomosci: Wiadomosc[]) => {
     await akcja('Zaimportowano zapytania', async () => { for (const m of wiadomosci) await dodaj('zapytania', { data: m.data, zrodlo: 'mail', od: m.od, temat: m.temat, tresc: m.tresc.slice(0, 20000), status: 'nowe', klientId: null, ofertaId: null, gmailId: m.id }); });
@@ -48,10 +55,21 @@ export default function Poczta() {
     <>
       <Naglowek tytul="Zapytania i poczta" akcje={<>
         <Przycisk maly onClick={() => setNowe({ od: '', temat: '', tresc: '', zrodlo: 'ręczne' })}>+ Wklej wiadomość</Przycisk>
-        {googleSkonfigurowany && <Przycisk maly wariant="glowny" disabled={czeka} onClick={pobierz}>{czeka ? 'Pobieram…' : 'Pobierz z Gmaila'}</Przycisk>}
+        {googleSkonfigurowany && <Przycisk maly wariant="glowny" disabled={czeka} onClick={() => pobierz()}>{czeka ? 'Pobieram…' : 'Pobierz z Gmaila'}</Przycisk>}
       </>} />
       {!googleSkonfigurowany && <p className="mb-3 rounded-xl border border-linia bg-karta px-3 py-2 text-sm text-przygasz">Gmail nie jest podłączony (brak VITE_GOOGLE_CLIENT_ID – instrukcja w README). Możesz wklejać wiadomości ręcznie – oferta wypełni się tak samo.</p>}
       {googleSkonfigurowany && <p className="mb-3 text-xs text-przygasz">Filtr Gmaila: <code>{ust.google.zapytanie}</code> (zmienisz w Ustawieniach → Integracje). Aplikacja tylko czyta wiadomości; wysyłka zawsze wymaga potwierdzenia.</p>}
+
+      {wynik && (
+        <div role="status" className={`mb-3 rounded-xl border px-3 py-2 text-sm ${wynik.ok ? 'border-linia bg-karta' : 'border-zle/40 bg-zle/10 text-zle'}`}>
+          <p>{wynik.ok ? wynik.tekst : `Nie udało się pobrać poczty: ${wynik.tekst}`}</p>
+          {wynik.ok && wynik.pusto && wynik.zapytanie !== CALA_SKRZYNKA && <>
+            <p className="mt-1 text-przygasz">Oznacz maile od klientów w Gmailu etykietą „zapytania” albo przeszukaj całą skrzynkę odbiorczą.</p>
+            <Przycisk maly className="mt-2" disabled={czeka} onClick={() => pobierz(CALA_SKRZYNKA)}>Pokaż skrzynkę odbiorczą z 14 dni</Przycisk>
+          </>}
+          {!wynik.ok && <p className="mt-1">Jeśli okno Google się nie otworzyło, zezwól tej stronie na wyskakujące okienka i spróbuj ponownie.</p>}
+        </div>
+      )}
 
       {zGmaila && zGmaila.length > 0 && (
         <Karta className="mb-4" tytul={`Nowe w Gmailu (${zGmaila.length})`} akcje={<Przycisk maly wariant="glowny" onClick={() => importuj(zGmaila)}>Dodaj wszystkie</Przycisk>}>

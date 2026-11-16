@@ -39,7 +39,7 @@ export async function token(zakres: string): Promise<string> {
         tokeny.set(zakres, { token: r.access_token, wygasa: Date.now() + (r.expires_in ?? 3600) * 1000 });
         ok(r.access_token);
       },
-      error_callback: () => zle(new Error('Logowanie do Google zostało przerwane.')),
+      error_callback: (e: { type?: string }) => zle(new Error(e?.type === 'popup_failed_to_open' ? 'Przeglądarka zablokowała okno logowania Google.' : 'Logowanie do Google zostało przerwane.')),
     });
     klient.requestAccessToken({ prompt: t ? '' : 'consent' });
   });
