@@ -26,7 +26,7 @@ export default function Poczta() {
 
   const lista = zapytania.filter((z) => stan.filtr === 'wszystkie' || z.status === stan.filtr).filter((z) => pasuje(stan.szukaj, z.od, z.temat, z.tresc))
     .sort((a, b) => (stan.sort === 'nadawca' ? a.od.localeCompare(b.od, 'pl') : b.data.localeCompare(a.data) || b.utworzono - a.utworzono));
-  const CALA_SKRZYNKA = 'in:inbox newer_than:14d';
+  const CALA_SKRZYNKA = 'category:primary newer_than:14d';
   const pobierz = async (zapytanie: string = ust.google.zapytanie) => {
     setCzeka(true);
     setWynik(null);
@@ -65,7 +65,7 @@ export default function Poczta() {
           <p>{wynik.ok ? wynik.tekst : `Nie udało się pobrać poczty: ${wynik.tekst}`}</p>
           {wynik.ok && wynik.pusto && wynik.zapytanie !== CALA_SKRZYNKA && <>
             <p className="mt-1 text-przygasz">Oznacz maile od klientów w Gmailu etykietą „zapytania” albo przeszukaj całą skrzynkę odbiorczą.</p>
-            <Przycisk maly className="mt-2" disabled={czeka} onClick={() => pobierz(CALA_SKRZYNKA)}>Pokaż skrzynkę odbiorczą z 14 dni</Przycisk>
+            <Przycisk maly className="mt-2" disabled={czeka} onClick={() => pobierz(CALA_SKRZYNKA)}>Pokaż główną skrzynkę z 14 dni (bez reklam)</Przycisk>
           </>}
           {!wynik.ok && <p className="mt-1">Jeśli okno Google się nie otworzyło, zezwól tej stronie na wyskakujące okienka i spróbuj ponownie.</p>}
         </div>
