@@ -1,0 +1,166 @@
+// Wartości domyślne: cennik, szablony dokumentów, parametry kalkulatorów. Wszystko edytowalne w Ustawieniach.
+import type { PozycjaCennika, Uprawnienia, Ustawienia, WarstwaZuzycia } from './typy';
+
+export const CENNIK: PozycjaCennika[] = [
+  { klucz: 'pos', nazwa: 'Posadzki dekoracyjne', jedn: 'm²', cena: 390, cenaAlt: 410, altEtykieta: 'niestandardowe', altGlobalny: true, powierzchnia: true, grupa: 'główne' },
+  { klucz: 'sg', nazwa: 'Ściany – strefa sucha', jedn: 'm²', cena: 290, cenaAlt: 310, altEtykieta: 'niestandardowe', altGlobalny: true, powierzchnia: true, grupa: 'główne' },
+  { klucz: 'sm', nazwa: 'Ściany – strefa mokra', jedn: 'm²', cena: 390, cenaAlt: 410, altEtykieta: 'niestandardowe', altGlobalny: true, powierzchnia: true, grupa: 'główne' },
+  { klucz: 'hy', nazwa: 'Hydroizolacja ścian strefy mokrej', jedn: 'm²', cena: 120, grupa: 'główne' },
+  { klucz: 'si', nazwa: 'Montaż siatki z klejem', jedn: 'm²', cena: 120, grupa: 'główne' },
+  { klucz: 'na', nazwa: 'Wklejanie narożników i taśm', jedn: 'mb', cena: 40, grupa: 'główne' },
+  { klucz: 'po', nazwa: 'Półki w łazience', jedn: 'szt.', cena: 150, grupa: 'główne' },
+  { klucz: 'sz', nazwa: 'Szpalety okienne', jedn: 'mb', cena: 100, grupa: 'główne' },
+  { klucz: 'st', nazwa: 'Schody (profilowanie, mikrocement, lakier)', jedn: 'stopień', cena: 900, grupa: 'główne' },
+  { klucz: 'ga', nazwa: 'Posadzka garażowa antypoślizgowa', jedn: 'm²', cena: 290, cenaAlt: 320, altEtykieta: 'wersja rozszerzona', powierzchnia: true, grupa: 'główne' },
+  { klucz: 'an', nazwa: 'Dopłata za słaby podkład lub anhydryt', jedn: 'm²', cena: 30, grupa: 'główne' },
+  { klucz: 'spad', nazwa: 'Spad przy odpływie liniowym', jedn: 'szt.', cena: 900, grupa: 'dodatkowe' },
+  { klucz: 'mata', nazwa: 'Mata z włókna szklanego', jedn: 'm²', cena: 100, grupa: 'dodatkowe' },
+  { klucz: 'dyl', nazwa: 'Korekta dylatacji obwodowych', jedn: 'mb', cena: 80, grupa: 'dodatkowe' },
+];
+
+export const UPRAWNIENIA: Uprawnienia = {
+  kwoty: false, koszty: false, rozliczenie: false, wszystkieZlecenia: false, wszystkieGodziny: false,
+  klienci: false, oferty: false, raporty: false, materialy: true, dokumenty: false,
+};
+
+export const OPISY_UPRAWNIEN: Record<keyof Uprawnienia, string> = {
+  kwoty: 'Widzi kwoty zleceń, wynik i marże',
+  koszty: 'Widzi wszystkie koszty zakupu',
+  rozliczenie: 'Widzi pełne rozliczenie wspólników',
+  wszystkieZlecenia: 'Widzi wszystkie zlecenia (nie tylko swoje)',
+  wszystkieGodziny: 'Widzi godziny drugiej osoby',
+  klienci: 'Widzi kartotekę klientów i zapytania',
+  oferty: 'Widzi i tworzy oferty',
+  raporty: 'Widzi raporty',
+  materialy: 'Widzi materiały i magazyn',
+  dokumenty: 'Widzi dokumenty dla klientów',
+};
+
+// Zużycia są orientacyjne – przed pierwszym użyciem zweryfikuj je z kartami technicznymi producenta.
+const warstwy = (podklad: number, baza: number, wykonczenie: number, lakier: number): WarstwaZuzycia[] => [
+  { nazwa: 'Grunt / mostek sczepny', zuzycie: podklad, warstwy: 1, jedn: 'kg', opakowanie: 5 },
+  { nazwa: 'Warstwa bazowa', zuzycie: baza, warstwy: 2, jedn: 'kg', opakowanie: 20 },
+  { nazwa: 'Warstwa wykończeniowa', zuzycie: wykonczenie, warstwy: 2, jedn: 'kg', opakowanie: 15 },
+  { nazwa: 'Lakier ochronny', zuzycie: lakier, warstwy: 2, jedn: 'l', opakowanie: 5 },
+];
+export const ZUZYCIE: Record<string, WarstwaZuzycia[]> = {
+  'LIFE': warstwy(0.15, 0.9, 0.35, 0.08),
+  'TITAN Standard': warstwy(0.15, 1.0, 0.4, 0.08),
+  'TITAN Hardcore': warstwy(0.15, 1.2, 0.45, 0.1),
+  'HYDROFEST': warstwy(0.2, 1.0, 0.4, 0.1),
+  'GO!': warstwy(0.15, 0.7, 0.3, 0.08),
+};
+
+export const SZABLONY: Record<string, string> = {
+  oferta_wstep:
+    'Dziękuję za zainteresowanie. Poniżej przedstawiam wycenę wykonania powierzchni z mikrocementu w systemie {{system}} pod adresem: {{adres}}.',
+  oferta_warunki: [
+    'Wycena zakłada podłoże cementowe odpowiedniej jakości: nośne, suche, równe, bez spękań i zabrudzeń.',
+    'Jeżeli podłoże okaże się słabe lub jest to anhydryt, doliczana jest dopłata za jego przygotowanie wg pozycji cennika.',
+    'Szacowany czas realizacji: {{dni}} dni roboczych.',
+    'Start prac: do {{start}} dni od podpisania umowy. Zaliczka przy podpisaniu umowy: {{zaliczka}}% wartości brutto.',
+    'Prace dodatkowe, których nie widać w dniu wyceny, rozliczane są po ocenie podłoża i uzgodnieniu z Zamawiającym.',
+    'Podane ceny są cenami netto. Do sumy doliczany jest podatek VAT {{vat}}%.',
+    'Oferta ważna {{waznosc}} dni od daty wystawienia, tj. do {{waznaDo}}.',
+  ].join('\n'),
+  oferta_stopka: 'W razie pytań proszę o kontakt telefoniczny lub mailowy. Chętnie doprecyzuję zakres i pokażę próbki kolorów.',
+  umowa: [
+    'zawarta w dniu {{data}} pomiędzy:',
+    '{{firma}}, {{firmaAdres}}, NIP {{nip}}, zwanym dalej Wykonawcą,',
+    'a',
+    '{{klient}}, {{adresKlienta}}, zwanym dalej Zamawiającym.',
+    '',
+    '§1. Przedmiot umowy',
+    'Wykonawca zobowiązuje się wykonać powierzchnie z mikrocementu w systemie {{system}} pod adresem: {{adres}}. Zakres prac: {{zakres}}',
+    '',
+    '§2. Termin',
+    'Rozpoczęcie prac: {{dataStart}}. Planowane zakończenie: {{dataKoniec}}. Termin może się przesunąć, jeżeli podłoże wymaga dodatkowego schnięcia lub Zamawiający nie udostępni pomieszczeń.',
+    '',
+    '§3. Wynagrodzenie',
+    'Wynagrodzenie za wykonanie dzieła wynosi {{netto}} netto + VAT {{vat}}%, tj. {{brutto}} brutto. Zaliczka w wysokości {{zaliczkaKwota}} płatna jest przy podpisaniu umowy, pozostała część w terminie 3 dni od odbioru prac.',
+    '',
+    '§4. Obowiązki Zamawiającego',
+    'Zamawiający zapewnia dostęp do pomieszczeń, prądu i wody, temperaturę co najmniej 15°C oraz wstrzymanie innych prac w pomieszczeniach na czas realizacji i utwardzania powierzchni.',
+    '',
+    '§5. Odbiór i gwarancja',
+    'Odbiór prac potwierdza protokół podpisany przez obie strony. Wykonawca udziela 24 miesięcy gwarancji na wykonane prace, pod warunkiem użytkowania zgodnie z przekazaną instrukcją pielęgnacji. Gwarancja nie obejmuje pęknięć wynikających z pracy podłoża ani uszkodzeń mechanicznych.',
+    '',
+    '§6. Postanowienia końcowe',
+    'Zmiany umowy wymagają formy pisemnej. W sprawach nieuregulowanych stosuje się przepisy Kodeksu cywilnego. Umowę sporządzono w dwóch jednobrzmiących egzemplarzach.',
+  ].join('\n'),
+  protokol: [
+    'W dniu {{data}} dokonano odbioru prac wykonanych przez {{firma}} dla: {{klient}}, pod adresem: {{adres}}.',
+    '',
+    'Zakres wykonanych prac: {{zakres}}',
+    '',
+    'Uwagi Zamawiającego: {{uwagi}}',
+    '',
+    'Zalecenia: przez pierwsze 24 godziny po zakończeniu prac nie wchodzić na powierzchnię. Lekki ruch pieszy możliwy po 48 godzinach. Meble ustawiać po 7 dniach, podklejając nóżki filcem. Pełne utwardzenie i odporność na wodę oraz środki czystości powierzchnia uzyskuje po około 28 dniach – do tego czasu nie zalewać wodą i nie przykrywać szczelnie folią ani dywanami.',
+    '',
+    'Zamawiający potwierdza odbiór prac {{zastrzezenia}} oraz otrzymanie instrukcji pielęgnacji.',
+  ].join('\n'),
+  pielegnacja: [
+    'Pierwsze dni',
+    '• 24 godziny: nie wchodzić na powierzchnię.',
+    '• 48 godzin: dopuszczalny lekki ruch pieszy w miękkim obuwiu.',
+    '• 7 dni: można ustawiać meble; nóżki podkleić filcem, ciężkich przedmiotów nie przesuwać po powierzchni.',
+    '• 28 dni: pełne utwardzenie. Do tego czasu nie myć na mokro, nie zostawiać stojącej wody, nie przykrywać dywanami ani folią.',
+    '',
+    'Codzienna pielęgnacja',
+    '• Odkurzać miękką końcówką lub zamiatać miękką szczotką.',
+    '• Myć wilgotnym (nie mokrym) mopem z dodatkiem środka o neutralnym pH.',
+    '• Rozlane płyny, zwłaszcza wino, kawę, olej i ocet, wycierać od razu.',
+    '',
+    'Czego unikać',
+    '• Środków z chlorem, amoniakiem, kwasami i wybielaczami oraz mleczek ściernych.',
+    '• Szorstkich gąbek, drucianych zmywaków i myjek parowych.',
+    '• Przesuwania mebli bez podkładek oraz chodzenia w butach z piaskiem – przy wejściu warto położyć wycieraczkę.',
+    '',
+    'Strefy mokre',
+    '• Po kąpieli ściągnąć wodę ściągaczką i przewietrzyć łazienkę.',
+    '• Osad z kamienia usuwać łagodnym środkiem przeznaczonym do powierzchni lakierowanych.',
+    '',
+    'Odświeżenie',
+    '• Przy intensywnym użytkowaniu zaleca się odnowienie warstwy lakieru co kilka lat. W razie zarysowań lub pytań proszę o kontakt.',
+  ].join('\n'),
+  zaliczka: [
+    'Potwierdzam otrzymanie w dniu {{data}} zaliczki w kwocie {{kwota}} (słownie: {{slownie}}) od: {{klient}}.',
+    '',
+    'Zaliczka dotyczy wykonania prac pod adresem: {{adres}}. Zakres: {{zakres}}',
+    '',
+    'Forma płatności: {{forma}}. Zaliczka zostanie zaliczona na poczet wynagrodzenia. Wartość całości prac: {{brutto}} brutto, do zapłaty po odbiorze pozostaje {{pozostalo}}.',
+  ].join('\n'),
+  proforma: [
+    'Nabywca: {{klient}}, {{adresKlienta}}',
+    '',
+    'Tytuł: {{zakres}}',
+    'Wartość netto: {{netto}}',
+    'VAT {{vat}}%: {{kwotaVat}}',
+    'Do zapłaty brutto: {{kwota}}',
+    '',
+    'Termin płatności: {{termin}}. Rachunek bankowy: {{konto}}. W tytule przelewu proszę podać numer: {{nr}}.',
+    '',
+    'Proforma nie jest fakturą VAT ani dokumentem księgowym. Faktura zostanie wystawiona po otrzymaniu płatności.',
+  ].join('\n'),
+};
+
+export function domyslneUstawienia(): Omit<Ustawienia, 'id' | '_ts' | '_zm' | 'utworzono' | 'utworzyl'> {
+  return {
+    firma: { nazwa: 'Beskid Floor', nip: '', adres: 'Bielsko-Biała', telefon: '', email: '', www: '', konto: '', logo: null },
+    ludzie: { wlasciciel: { imie: 'Janek' }, wspolnik: { imie: 'Kuba' } },
+    udzial: 60,
+    stawka: 40,
+    vatZlecen: 8,
+    vatKosztow: 23,
+    vatOfert: 8,
+    zaliczka: 20,
+    waznosc: 14,
+    cennik: structuredClone(CENNIK),
+    szablony: { ...SZABLONY },
+    dojazd: { spalanie: 8, cenaPaliwa: 6.5, zlKm: 0, vat: 23 },
+    zuzycie: structuredClone(ZUZYCIE),
+    uprawnienia: { ...UPRAWNIENIA },
+    podatki: { wlaczone: false, podatekProc: 0, zdrowotnaProc: 0, zusMies: 0 },
+    google: { zapytanie: 'label:zapytania newer_than:30d', kalendarzId: 'primary' },
+  };
+}

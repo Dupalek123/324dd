@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --tlo: #f4efe8;
+  --karta: #fffdf9;
+  --wglebienie: #ebe3d8;
+  --tekst: #2b2622;
+  --przygasz: #6a6057;
+  --linia: #ddd2c4;
+  --akcent: #7a5a3c;
+  --akcent-mocny: #5f4530;
+  --na-akcencie: #ffffff;
+  --akcent-tlo: #efe3d3;
+  --dobrze: #3f6f3d;
+  --zle: #a93a2a;
+  --uwaga: #96610f;
+  --seria1: #b86a1e;
+  --seria2: #2a78c2;
+  color-scheme: light;
+}
+.dark {
+  --tlo: #1b1815;
+  --karta: #26221e;
+  --wglebienie: #312c27;
+  --tekst: #f0e9e0;
+  --przygasz: #b0a497;
+  --linia: #423b34;
+  --akcent: #cfa97a;
+  --akcent-mocny: #e0bd91;
+  --na-akcencie: #1b1815;
+  --akcent-tlo: #3a3027;
+  --dobrze: #8fc48b;
+  --zle: #ef8f7f;
+  --uwaga: #e5b45c;
+  --seria1: #c9822f;
+  --seria2: #3f8fd6;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-tlo: var(--tlo);
+  --color-karta: var(--karta);
+  --color-wglebienie: var(--wglebienie);
+  --color-tekst: var(--tekst);
+  --color-przygasz: var(--przygasz);
+  --color-linia: var(--linia);
+  --color-akcent: var(--akcent);
+  --color-akcent-mocny: var(--akcent-mocny);
+  --color-na-akcencie: var(--na-akcencie);
+  --color-akcent-tlo: var(--akcent-tlo);
+  --color-dobrze: var(--dobrze);
+  --color-zle: var(--zle);
+  --color-uwaga: var(--uwaga);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+button, [role="button"], a, select, summary { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--akcent); outline-offset: 2px; border-radius: 6px; }
+input, select, textarea { font-size: 16px; } /* iOS nie powiększa widoku przy fokusie */
+.liczby { font-variant-numeric: tabular-nums; }
+.przewijanie-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media print { .bez-druku { display: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

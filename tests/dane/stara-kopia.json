@@ -1,0 +1,28 @@
+{
+  "set": { "firma": "Beskid Floor", "nip": "5470000000", "tel": "600 000 000", "mail": "kontakt@example.com", "adres": "ul. Górska 1, Bielsko-Biała",
+    "ludzie": [{ "n": "Janek", "st": 0 }, { "n": "Kuba", "st": 35 }], "udz": 60, "sth": 35, "spal": 8.5, "pal": 6.49, "eksp": 0.25 },
+  "zl": [
+    { "id": 1700000000001, "klient": "Anna Nowak", "tel": "601 111 222", "adres": "ul. Leśna 5, Bielsko-Biała", "opis": "Salon z kuchnią", "sys": "TITAN Standard", "m2": 48, "cena": 432, "vat": 8, "netto": 19200, "brutto": 20736, "kwota": 19200, "st": "Zakończone", "od": "Janek", "tr": "razem", "sth": null },
+    { "id": "zl-2", "klient": "Piotr Wiśniewski", "tel": "602 333 444", "adres": "Oświęcim, ul. Krótka 3", "opis": "Garaż", "sys": "GO!", "m2": 25, "cena": 400, "vat": 23, "netto": 8130.08, "brutto": 10000, "kwota": 8130.08, "st": "W realizacji", "od": "Kuba", "tr": "godz", "sth": 45 },
+    { "id": 3, "klient": "Firma XYZ", "tel": "", "adres": "Wadowice", "opis": "", "sys": "LIFE", "m2": "", "cena": "", "vat": 8, "kwota": 5000, "st": "Oferta", "od": "Janek", "tr": "razem" }
+  ],
+  "gd": [
+    { "id": 1, "d": "2026-03-02", "os": "Janek", "zl": 1700000000001, "h": 8 },
+    { "id": 2, "d": "2026-03-02", "os": "Kuba", "zl": "1700000000001", "h": 7.5 },
+    { "id": 3, "d": "2026-03-03", "os": "Kuba", "zl": 1700000000001, "h": 6.25 },
+    { "id": 4, "d": "2026-04-10", "os": "Janek", "zl": "zl-2", "h": 4 }
+  ],
+  "ko": [
+    { "id": 11, "d": "2026-03-01", "zl": 1700000000001, "kat": "Materiał", "op": "Mikrocement, lakier", "vat": 23, "netto": 3500, "brutto": 4305, "kw": 3500 },
+    { "id": 12, "d": "2026-03-02", "zl": "1700000000001", "kat": "Narzędzia", "op": "Pace", "vat": 23, "netto": 500, "brutto": 615, "kw": 500 },
+    { "id": 13, "d": "2026-03-10", "zl": 1700000000001, "kat": "Transport", "op": "Dojazdy 5 dni", "vat": 23, "netto": 162.6, "brutto": 200, "kw": 162.6, "t": { "km": 320, "l": 27.2 } },
+    { "id": 14, "d": "2026-04-10", "zl": "zl-2", "kat": "Materiał", "op": "Żywica", "vat": 23, "kw": 500 },
+    { "id": 15, "d": "2026-01-15", "zl": 999, "kat": "Ubezpieczenia", "op": "Ubezpieczenie OC", "vat": 0, "netto": 1200, "brutto": 1200, "kw": 1200 }
+  ],
+  "of": [
+    { "id": 21, "nr": "BF/2026/003", "data": "2026-02-14", "klient": "Anna Nowak", "tel": "601 111 222", "mail": "anna@example.com", "adres": "ul. Leśna 5, Bielsko-Biała", "sys": "TITAN Standard", "vat": 8, "pan": false, "dni": 7, "term": 14, "zal": 20, "waz": 14, "uw": "Kolor: jasny beż",
+      "it": { "pos": { "q": 48, "p": 400 }, "sm": { "q": 12, "p": 390 }, "hy": { "q": 12, "p": 120 }, "st": { "q": 14, "p": 900 }, "sg": { "q": "", "p": 290 }, "ga": { "q": 0, "p": 290 } } },
+    { "id": 22, "nr": "BF/2026/004", "data": "20.02.2026", "klient": "Piotr Wiśniewski", "tel": "602 333 444", "mail": "", "adres": "Oświęcim", "sys": "LIFE", "vat": 23, "pan": true, "dni": 5, "term": "po 1 maja", "zal": 30, "waz": 7, "uw": "",
+      "it": { "pos": { "q": 20, "p": 410 }, "spa": { "q": 2, "p": 777 } } }
+  ]
+}
