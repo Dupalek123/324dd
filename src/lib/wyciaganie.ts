@@ -52,15 +52,15 @@ export function wyciagnijLokalnie(tekst: string): DaneZWiadomosci {
   const pow = /(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\^2|mkw|m\.?\s?kw\.?|metr(?:y|ów)?(?:\s+kw\w*)?)(?![a-z0-9])/gi;
   let m: RegExpExecArray | null;
   while ((m = pow.exec(t))) {
-    const przed = t.slice(Math.max(0, m.index - 70), m.index).toLowerCase();
-    const po = t.slice(m.index + m[0].length, m.index + m[0].length + 40).toLowerCase();
-    const zdanie = przed.split(/[.;\n]/).pop() ?? '';
-    const ktx = zdanie + ' ' + (po.split(/[.,;\n]/)[0] ?? '');
-    const v = num(m[1]);
-    if (/gara[żz]/.test(ktx)) dodaj('ga', v);
-    else if (/[śs]cian/.test(ktx)) dodaj(/prysznic|mokr|[łl]azien|kabin|wann/.test(ktx) ? 'sm' : 'sg', v);
-    else if (/prysznic|kabin/.test(ktx)) dodaj('sm', v);
-    else dodaj('pos', v);
+    // najpierw patrzymy na słowa tuż przed liczbą („podłoga w salonie 40 m2”), dopiero potem na te po niej („40 m2 podłogi”)
+    const przed = (t.slice(Math.max(0, m.index - 70), m.index).toLowerCase().split(/[.;,\n]|\s(?:i|oraz|plus)\s/).pop() ?? '');
+    const po = (t.slice(m.index + m[0].length, m.index + m[0].length + 40).toLowerCase().split(/[.;,\n]|\s(?:i|oraz|plus)\s/)[0] ?? '');
+    const rodzaj = (k: string): string | null =>
+      /gara[żz]/.test(k) ? 'ga'
+        : /[śs]cian/.test(k) ? (/prysznic|mokr|[łl]azien|kabin|wann/.test(k) ? 'sm' : 'sg')
+        : /prysznic|kabin/.test(k) ? 'sm'
+        : /pod[łl]og|posadzk|salon|kuchni|pok[oó]j|korytarz|sypialni|jadalni|parter|pi[ęe]tr/.test(k) ? 'pos' : null;
+    dodaj(rodzaj(przed) ?? rodzaj(po) ?? 'pos', num(m[1]));
   }
   const st = /(\d+)\s*(?:stopni|stopnie|schodk|schod[óo]w)/i.exec(t) ?? /schod\w*[^.\n\d]{0,40}?(\d+)\s*(?:szt|stopni)?/i.exec(t);
   if (st) dodaj('st', Number(st[1]));

@@ -10,7 +10,7 @@ export const CENNIK: PozycjaCennika[] = [
   { klucz: 'na', nazwa: 'Wklejanie narożników i taśm', jedn: 'mb', cena: 40, grupa: 'główne' },
   { klucz: 'po', nazwa: 'Półki w łazience', jedn: 'szt.', cena: 150, grupa: 'główne' },
   { klucz: 'sz', nazwa: 'Szpalety okienne', jedn: 'mb', cena: 100, grupa: 'główne' },
-  { klucz: 'st', nazwa: 'Schody (profilowanie, mikrocement, lakier)', jedn: 'stopień', cena: 900, grupa: 'główne' },
+  { klucz: 'st', nazwa: 'Schody (profilowanie, mikrocement, lakier)', jedn: 'stopni', cena: 900, grupa: 'główne' },
   { klucz: 'ga', nazwa: 'Posadzka garażowa antypoślizgowa', jedn: 'm²', cena: 290, cenaAlt: 320, altEtykieta: 'wersja rozszerzona', powierzchnia: true, grupa: 'główne' },
   { klucz: 'an', nazwa: 'Dopłata za słaby podkład lub anhydryt', jedn: 'm²', cena: 30, grupa: 'główne' },
   { klucz: 'spad', nazwa: 'Spad przy odpływie liniowym', jedn: 'szt.', cena: 900, grupa: 'dodatkowe' },

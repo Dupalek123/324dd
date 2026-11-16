@@ -110,6 +110,10 @@ Marta Zielińska`);
     expect(d.ilosci).toEqual({ pos: 62.5, sm: 14, hy: 14, st: 15, ga: 30 });
     expect(d.uwagi).toContain('ogrzewanie podłogowe');
   });
+  it('dwa metraże w jednym zdaniu trafiają do właściwych pozycji', () => {
+    const d = wyciagnijLokalnie('Proszę o wycenę: podłoga w salonie 40 m2 i ściany przy prysznicu 12,5 m2, schody 14 stopni. 25 m2 garażu też.');
+    expect(d.ilosci).toEqual({ pos: 40, sm: 12.5, hy: 12.5, st: 14, ga: 25 });
+  });
   it('krótki SMS', () => {
     const d = wyciagnijLokalnie('Witam, ile kosztuje mikrocement na podłogę 35m² w Wadowicach? Tomek 512 000 111');
     expect(d.ilosci).toEqual({ pos: 35 });

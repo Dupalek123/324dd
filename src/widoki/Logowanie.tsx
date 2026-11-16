@@ -19,6 +19,7 @@ export default function Logowanie() {
   const wejdz = async () => {
     const org = await mojaOrg();
     if (!org) { setKrok('firma'); return; }
+    location.hash = '#/';
     ustawSesje({ tryb: 'chmura', osoba: org.rola, orgId: org.org_id, email: org.email || email });
   };
   const wykonaj = async (f: () => Promise<void>) => {
@@ -34,6 +35,7 @@ export default function Logowanie() {
       const d = otworzBaze('bf-lokalna', 'wlasciciel');
       if ((await d.tab('zlecenia').count()) === 0) await wczytajDemo();
     }
+    location.hash = '#/';
     ustawSesje({ tryb: 'lokalny', osoba });
   };
 
