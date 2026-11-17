@@ -43,6 +43,16 @@ supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 
 Funkcja używa modelu `claude-opus-5-5` (zmiana: sekret `ANTHROPIC_MODEL`). Klucz API zostaje na serwerze. Bez tej funkcji, bez sieci albo przy błędzie działa prostszy parser wbudowany w aplikację. W obu przypadkach dane najpierw pokazują się do akceptacji.
 
+### Odczyt paragonów ze zdjęcia (opcjonalnie)
+
+W formularzu kosztu po wybraniu zdjęcia paragonu dane (data, sprzedawca, pozycje, kwoty, stawki VAT) odczytują się same i pokazują do akceptacji; do formularza trafiają dopiero po kliknięciu „Wstaw do formularza”. Netto liczy się osobno dla każdej stawki VAT, tak jak w podsumowaniu PTU na paragonie. Działa po zalogowaniu kontem i z internetem.
+
+```bash
+supabase functions deploy skanuj-paragon
+```
+
+Używa tego samego sekretu `ANTHROPIC_API_KEY` co `wyciagnij-dane` i płatnego konta API Anthropic (osobnego od abonamentu na czat). Model domyślny to `claude-opus-5-5`; tańszy model ustawisz sekretem `ANTHROPIC_MODEL` (sprawdź jakość odczytu na kilku własnych paragonach). Zdjęcie nie jest nigdzie zapisywane przez funkcję. Bez funkcji formularz kosztu działa jak dotąd, a dane wpisujesz ręcznie.
+
 ## Google OAuth (Gmail i Kalendarz, opcjonalnie)
 
 1. console.cloud.google.com → nowy projekt → włącz **Gmail API** i **Google Calendar API**.

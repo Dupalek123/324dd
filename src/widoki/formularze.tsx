@@ -11,6 +11,7 @@ import {
   KATEGORIE, OSOBY, STATUSY_ZLECEN, SYSTEMY, TYPY_PRAC, ZRODLA, type Klient, type Koszt, type OsobaId, type Vat,
   type WpisGodzin, type Zadanie, type Zlecenie,
 } from '../lib/typy';
+import { OdczytParagonu } from './OdczytParagonu';
 import { Etykieta, Obszar, Okno, PolaKwoty, Pole, PoleLiczba, Przelacznik, Przycisk, Segmenty, useForm, useUsuwanie, Wiersz, Wybor } from '../ui/komponenty';
 
 const BRAK = '__brak__';
@@ -106,6 +107,7 @@ export function FormularzKosztu({ koszt, zlecenieId, onClose }: { koszt?: Koszt;
   const [metoda, setMetoda] = useState<'brak' | 'rowno' | 'przychod'>(koszt?.rozdzial?.length ? 'rowno' : 'brak');
   const [wybrane, setWybrane] = useState<string[]>(koszt?.rozdzial?.map((r) => r.zlecenieId) ?? []);
   const [plik, setPlik] = useState<Blob | null>(null);
+  const [plikNr, setPlikNr] = useState(0);
   const [podglad, setPodglad] = useState<string | null>(null);
   const [blad, setBlad] = useState<string | null>(null);
   useEffect(() => {
@@ -136,6 +138,13 @@ export function FormularzKosztu({ koszt, zlecenieId, onClose }: { koszt?: Koszt;
     <Okno tytul={koszt ? 'Edycja kosztu' : 'Nowy koszt'} onClose={onClose} stopka={<>
       {koszt && <Przycisk wariant="grozny" className="mr-auto" onClick={async () => { if (await usuwanie('koszt', () => usun('koszty', koszt.id))) onClose(); }}>Usuń</Przycisk>}
       <Przycisk onClick={onClose}>Anuluj</Przycisk><Przycisk wariant="glowny" onClick={zapisz}>Zapisz</Przycisk></>}>
+      <Etykieta etykieta="Zdjęcie paragonu / faktury" podpowiedz="Zrób zdjęcie z bliska, na płasko, przy dobrym świetle – cały paragon w kadrze. Dane odczytają się same.">
+        <input type="file" accept="image/*,application/pdf" capture="environment" className="block w-full text-sm file:mr-3 file:min-h-11 file:rounded-xl file:border file:border-linia file:bg-karta file:px-4 file:text-tekst"
+          onChange={async (e) => { const f = e.target.files?.[0]; if (f) { setPlik(await zmniejszObraz(f, 2000, 0.85)); setPlikNr((n) => n + 1); } }} />
+      </Etykieta>
+      {(plik || w.plikId) && <OdczytParagonu klucz={plikNr} auto={plikNr > 0} domyslnyVat={ust.vatKosztow} zrodlo={async () => plik ?? (w.plikId ? pobierzBlob(w.plikId) : null)}
+        onUzyj={(r) => wiele({ ...(r.data ? { data: r.data } : {}), ...(r.dostawca ? { dostawca: r.dostawca } : {}), ...(r.opis ? { opis: r.opis } : {}), ...(r.kategoria ? { kategoria: r.kategoria } : {}), netto: r.netto, brutto: r.brutto, vat: r.vat })} />}
+      {podglad && <a href={podglad} target="_blank" rel="noreferrer"><img src={podglad} alt="Paragon" className="max-h-48 rounded-xl border border-linia" /></a>}
       <div className="grid grid-cols-2 gap-2">
         <Pole etykieta="Data" type="date" value={w.data ?? ''} onChange={(v) => ustaw('data', v)} />
         <Wybor etykieta="Kategoria" value={w.kategoria ?? 'Inne'} opcje={KATEGORIE} onChange={(v) => ustaw('kategoria', v)} />
@@ -163,11 +172,6 @@ export function FormularzKosztu({ koszt, zlecenieId, onClose }: { koszt?: Koszt;
           )}
         </div>
       )}
-      <Etykieta etykieta="Zdjęcie paragonu / faktury">
-        <input type="file" accept="image/*,application/pdf" capture="environment" className="block w-full text-sm file:mr-3 file:min-h-11 file:rounded-xl file:border file:border-linia file:bg-karta file:px-4 file:text-tekst"
-          onChange={async (e) => { const f = e.target.files?.[0]; if (f) setPlik(await zmniejszObraz(f)); }} />
-      </Etykieta>
-      {podglad && <a href={podglad} target="_blank" rel="noreferrer"><img src={podglad} alt="Paragon" className="max-h-48 rounded-xl border border-linia" /></a>}
     </Okno>
   );
 }
